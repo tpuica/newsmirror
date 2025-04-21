@@ -1,0 +1,61 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.4'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.openapi.generator' version '7.12.0'
+}
+
+group = 'de.newsmirror'
+version = '0.0.1-SNAPSHOT'
+
+sourceSets {
+	main {
+		java {
+			srcDir "${buildDir}/generated/oas/src/main/java"
+		}
+	}
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.6'
+	implementation 'io.swagger.parser.v3:swagger-parser:2.1.22'
+
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+openApiGenerate {
+	generatorName = "spring"
+	inputSpec.set("$rootDir/../oas/newsmirror.yaml")
+	outputDir.set("${rootProject.layout.buildDirectory.get()}/generated/oas")
+	apiPackage.set("de.newsmirror.core.api")
+	modelPackage.set("de.newsmirror.core.model")
+	modelNameSuffix = "Dto"
+	configOptions = [
+			dateLibrary				: "java8",
+			interfaceOnly			: "true",
+			useOptional         	: "true",
+			useTags             	: "true",
+			skipDefaultInterface	: "true",
+			useSpringBoot3      	: "true"
+	]
+}
+
+compileJava.dependsOn tasks.openApiGenerate
