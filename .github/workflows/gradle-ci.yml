@@ -16,6 +16,10 @@ on:
 jobs:
   build:
 
+    defaults:
+      run:
+        working-directory: ./backend
+
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -38,17 +42,14 @@ jobs:
       run: chmod +x gradlew
 
     - name: Validate with Gradle
-      working-directory: ./backend
       run: ./gradlew check      
 
     - name: Build with Gradle
-      working-directory: ./backend
       run: ./gradlew build
 
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
     - name: Publish to GitHub Packages
-      working-directory: ./backend
       run: ./gradlew publish
       env:
         USERNAME: ${{ github.actor }}
