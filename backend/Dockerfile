@@ -1,4 +1,5 @@
-FROM openjdk:21-jdk-alpine
+FROM eclipse-temurin:21
 MAINTAINER tp
-COPY build/libs/core-0.0.1-SNAPSHOT.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+RUN mkdir /opt/app
+COPY build/libs/core-0.0.1-SNAPSHOT.jar /opt/app/core.jar
+ENTRYPOINT ["java","-jar","/opt/app/core.jar"]
